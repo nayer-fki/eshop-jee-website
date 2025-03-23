@@ -1,0 +1,336 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Product Management Section */
+.gererProduits .product-management {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.gererProduits .product-management h2 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    background-color: #34495e;
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.gererProduits .product-management h2 i {
+    margin-right: 0.5rem;
+}
+
+.gererProduits .filter-bar {
+    margin-bottom: 1.5rem;
+}
+
+.gererProduits .filter-bar form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.gererProduits .filter-select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 30%;
+}
+
+.gererProduits .search-input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 50%;
+}
+
+.gererProduits .search-btn {
+    padding: 0.5rem 1rem;
+    background-color: #27ae60;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.gererProduits .search-btn:hover {
+    background-color: #219653;
+}
+
+.gererProduits .action-bar {
+    margin-bottom: 1.5rem;
+}
+
+.gererProduits .btn-add {
+    padding: 0.75rem 1.5rem;
+    background-color: #27ae60;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.gererProduits .btn-add i {
+    margin-right: 0.5rem;
+}
+
+.gererProduits .btn-add:hover {
+    background-color: #219653;
+}
+
+.gererProduits .message {
+    margin-bottom: 1.5rem;
+}
+
+.gererProduits .message p {
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.gererProduits .message.error p {
+    background: #fff5f5;
+    color: #e74c3c;
+    border-left: 4px solid #e74c3c;
+}
+
+.gererProduits .message.error p i {
+    margin-right: 0.5rem;
+    color: #e74c3c;
+}
+
+.gererProduits .message.success p {
+    background: #e6f4e6;
+    color: #27ae60;
+    border-left: 4px solid #27ae60;
+}
+
+.gererProduits .message.success p i {
+    margin-right: 0.5rem;
+    color: #27ae60;
+}
+
+.gererProduits .product-form {
+    margin-bottom: 2rem;
+    display: none;
+}
+
+.gererProduits .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.gererProduits .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.gererProduits .form-group label i {
+    margin-right: 0.5rem;
+    color: #34495e;
+}
+
+.gererProduits .form-group input[type="text"],
+.gererProduits .form-group input[type="number"],
+.gererProduits .form-group textarea,
+.gererProduits .form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.gererProduits .form-group textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.gererProduits .form-group input[type="text"]:focus,
+.gererProduits .form-group input[type="number"]:focus,
+.gererProduits .form-group textarea:focus,
+.gererProduits .form-group select:focus {
+    border-color: #4CAF50;
+    outline: none;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+.gererProduits .product-table {
+    margin-top: 1rem;
+}
+
+.gererProduits .product-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.gererProduits .product-table th,
+.gererProduits .product-table td {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.gererProduits .product-table th {
+    background-color: #34495e;
+    color: white;
+}
+
+/* Actions Column Styling */
+.gererProduits .product-table td.actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.gererProduits .btn-details,
+.gererProduits .btn-edit,
+.gererProduits .btn-delete {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.gererProduits .btn-details {
+    background-color: #f39c12;
+    color: #fff;
+}
+
+.gererProduits .btn-details:hover {
+    background-color: #e67e22;
+    transform: scale(1.1);
+}
+
+.gererProduits .btn-edit {
+    background-color: #2980b9;
+    color: #fff;
+}
+
+.gererProduits .btn-edit:hover {
+    background-color: #1c6ea4;
+    transform: scale(1.1);
+}
+
+.gererProduits .btn-delete {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.gererProduits .btn-delete:hover {
+    background-color: #c0392b;
+    transform: scale(1.1);
+}
+
+.gererProduits .btn-details i,
+.gererProduits .btn-edit i,
+.gererProduits .btn-delete i {
+    font-size: 1.2rem;
+}
+
+.gererProduits .btn-cancel {
+    padding: 0.75rem 1.5rem;
+    background-color: #95a5a6;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: 0.5rem;
+}
+
+.gererProduits .btn-cancel:hover {
+    background-color: #7f8c8d;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-body p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.modal-body p strong {
+    display: inline-block;
+    width: 150px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.modal-body img {
+    display: block;
+    margin-top: 10px;
+    border-radius: 4px;
+}
