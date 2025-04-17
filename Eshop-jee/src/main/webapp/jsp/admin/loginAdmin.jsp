@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Connexion Admin - E-Shop</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/loginadmin.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin/loginadmin.css">
 </head>
 <body>
     <div class="login-container">

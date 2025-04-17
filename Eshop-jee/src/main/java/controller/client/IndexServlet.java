@@ -1,4 +1,4 @@
-package controller;
+package controller.client;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,22 +8,25 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collectors;
 import model.ProduitDB;
 import model.CategorieDB;
+import model.PromotionalVideoDB;
 import model.Produit_model;
 import model.Categorie_model;
+import model.PromotionalVideo_model;
 
 @WebServlet("/index")
 public class IndexServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private ProduitDB produitDB;
     private CategorieDB categorieDB;
+    private PromotionalVideoDB videoDB;
 
     @Override
     public void init() throws ServletException {
         produitDB = new ProduitDB();
         categorieDB = new CategorieDB();
+        videoDB = new PromotionalVideoDB();
     }
 
     @Override
@@ -50,13 +53,18 @@ public class IndexServlet extends HttpServlet {
             }
 
             // Fetch discounted products for the "Offres Spéciales" section
-            List<Produit_model> discountedProduits = produitDB.getAllProducts().stream()
-                .filter(p -> p.getRemise() > 0)
-                .limit(4) // Limit to 4 featured products
-                .collect(Collectors.toList());
+            List<Produit_model> discountedProduits = produitDB.getDiscountedProducts();
+            if (discountedProduits.size() > 4) {
+                discountedProduits = discountedProduits.subList(0, 4);
+            }
+
+            // Fetch the promotional video URL
+            PromotionalVideo_model video = videoDB.getPromotionalVideo();
+            String videoUrl = (video != null && video.getVideoUrl() != null) ? video.getVideoUrl() : "https://www.youtube.com/embed/dQw4w9WgXcQ"; // Fallback URL
 
             request.setAttribute("produits", produits);
             request.setAttribute("discountedProduits", discountedProduits);
+            request.setAttribute("videoUrl", videoUrl);
             request.setAttribute("searchQuery", query);
 
             // Forward to JSP

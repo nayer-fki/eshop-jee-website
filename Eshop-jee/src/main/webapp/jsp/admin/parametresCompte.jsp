@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Paramètres de compte - E-Shop Admin</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parametreAdmin.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin/parametreAdmin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -36,6 +36,11 @@
             <div class="form-group">
                 <label><i class="fas fa-envelope"></i> Email :</label>
                 <input type="email" name="email" id="email" value="<%= admin.getEmail() != null ? admin.getEmail() : "" %>" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> Ancien mot de passe :</label>
+                <input type="password" name="oldPassword" id="oldPassword" placeholder="Entrez votre ancien mot de passe">
+                <small class="form-text">Requis si vous changez le mot de passe.</small>
             </div>
             <div class="form-group">
                 <label><i class="fas fa-lock"></i> Nouveau mot de passe (laisser vide pour ne pas changer) :</label>
@@ -71,6 +76,7 @@
 
     document.getElementById('accountForm').addEventListener('submit', function(event) {
         const email = document.getElementById('email').value;
+        const oldPassword = document.getElementById('oldPassword').value;
         const motDePasse = document.getElementById('motDePasse').value;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         
@@ -80,10 +86,17 @@
             return;
         }
 
-        if (motDePasse && motDePasse.length > 0 && (motDePasse.length < 8 || !/[a-zA-Z]/.test(motDePasse) || !/[0-9]/.test(motDePasse))) {
-            event.preventDefault();
-            alert('Le mot de passe doit contenir au moins 8 caractères, incluant des lettres et des chiffres.');
-            return;
+        if (motDePasse && motDePasse.length > 0) {
+            if (motDePasse.length < 8 || !/[a-zA-Z]/.test(motDePasse) || !/[0-9]/.test(motDePasse)) {
+                event.preventDefault();
+                alert('Le mot de passe doit contenir au moins 8 caractères, incluant des lettres et des chiffres.');
+                return;
+            }
+            if (!oldPassword || oldPassword.trim() === '') {
+                event.preventDefault();
+                alert('Veuillez entrer votre ancien mot de passe pour changer le mot de passe.');
+                return;
+            }
         }
     });
 </script>

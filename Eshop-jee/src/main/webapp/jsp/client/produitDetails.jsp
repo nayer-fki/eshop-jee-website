@@ -5,14 +5,18 @@
 <%@ page import="model.Utilisateur_model" %>
 <%@ page import="model.Evaluation" %>
 <%@ page import="model.Commentaire" %>
+<%@ page import="model.UtilisateurDB" %>
+<%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
 <%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="<%= ((Produit_model) request.getAttribute("produit")).getDescription() != null ? ((Produit_model) request.getAttribute("produit")).getDescription() : "Détails du produit sur E-Shop" %>">
+    <meta name="keywords" content="<%= ((Produit_model) request.getAttribute("produit")).getNom() %>, E-Shop, <%= ((Categorie_model) request.getAttribute("categorie")) != null ? ((Categorie_model) request.getAttribute("categorie")).getNom() : "" %>">
     <title>E-Shop - Détails du produit</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/productDetailsStyle.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/client/productDetailsStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
@@ -33,8 +37,10 @@
                     </a></li>
                     <% Utilisateur_model utilisateur = (Utilisateur_model) session.getAttribute("utilisateur"); %>
                     <% if (utilisateur != null) { %>
+                        <li><a href="${pageContext.request.contextPath}/profile">Mon Profil</a></li>
+                        <li><a href="${pageContext.request.contextPath}/orders">Mes commandes</a></li>
                         <li><span>Bonjour, <%= utilisateur.getNom() %></span></li>
-                        <li><a href="${pageContext.request.contextPath}/logout">Déconnexion</a></li>
+                        <li><a href="#" onclick="confirmLogout(event, '${pageContext.request.contextPath}/clientLogout')">Déconnexion</a></li>
                     <% } else { %>
                         <li><a href="${pageContext.request.contextPath}/login">Connexion</a></li>
                     <% } %>
@@ -77,6 +83,7 @@
                         <form action="${pageContext.request.contextPath}/addToCart" method="post" style="display: inline;">
                             <input type="hidden" name="productId" value="<%= produit.getId() %>">
                             <input type="hidden" name="quantity" value="1">
+                            <input type="hidden" name="csrfToken" value="<%= session.getAttribute("csrfToken") %>">
                             <button type="submit" class="btn btn-secondary add-to-cart">Ajouter au panier</button>
                         </form>
                         <a href="${pageContext.request.contextPath}/index" class="btn btn-primary">Retour à l'accueil</a>
@@ -91,7 +98,15 @@
                     Double averageRating = (Double) request.getAttribute("averageRating");
                     List<Evaluation> evaluations = (List<Evaluation>) request.getAttribute("evaluations");
                     List<Commentaire> commentaires = (List<Commentaire>) request.getAttribute("commentaires");
+                    UtilisateurDB utilisateurDB = new UtilisateurDB();
                 %>
+                <!-- Display Error Message -->
+                <% String errorMessage = (String) session.getAttribute("errorMessage");
+                   if (errorMessage != null) { %>
+                       <p style="color: red;"><%= errorMessage %></p>
+                       <% session.removeAttribute("errorMessage"); %>
+                <% } %>
+
                 <!-- Display Average Rating -->
                 <div class="average-rating">
                     Note moyenne : 
@@ -123,11 +138,35 @@
                     <% if (commentaires != null && !commentaires.isEmpty()) { %>
                         <% for (Commentaire commentaire : commentaires) { %>
                             <div class="comment">
-                                <p><strong>Utilisateur <%= commentaire.getIdUtilisateur() %></strong> - 
-                                   <span class="comment-date"><%= commentaire.getDateCreation() %></span></p>
-                                <p><%= commentaire.getCommentaire() %></p>
+                                <p><strong><%= utilisateurDB.getUserNameById(commentaire.getIdUtilisateur()) %></strong> - 
+                                   <span class="comment-date"><%= commentaire.getDateCreation() %></span>
+                                   <% boolean isAdmin = utilisateur != null && utilisateur.isEstAdmin(); %>
+                                   <% if (isAdmin) { %>
+                                       <form action="${pageContext.request.contextPath}/deleteComment" method="post" style="display: inline;">
+                                           <input type="hidden" name="commentId" value="<%= commentaire.getId() %>">
+                                           <input type="hidden" name="productId" value="<%= produit.getId() %>">
+                                           <input type="hidden" name="csrfToken" value="<%= session.getAttribute("csrfToken") %>">
+                                           <button type="submit" class="btn btn-delete">Supprimer</button>
+                                       </form>
+                                   <% } %>
+                                </p>
+                                <p><%= StringEscapeUtils.escapeHtml4(commentaire.getCommentaire()) %></p>
                             </div>
                         <% } %>
+                        <!-- Pagination -->
+                        <div class="pagination">
+                            <% int currentPage = (Integer) request.getAttribute("currentPage"); %>
+                            <% int totalPages = (Integer) request.getAttribute("totalPages"); %>
+                            <% if (currentPage > 1) { %>
+                                <a href="${pageContext.request.contextPath}/produitDetails?id=<%= produit.getId() %>&page=<%= currentPage - 1 %>">Précédent</a>
+                            <% } %>
+                            <% for (int i = 1; i <= totalPages; i++) { %>
+                                <a href="${pageContext.request.contextPath}/produitDetails?id=<%= produit.getId() %>&page=<%= i %>" <%= i == currentPage ? "class='active'" : "" %>><%= i %></a>
+                            <% } %>
+                            <% if (currentPage < totalPages) { %>
+                                <a href="${pageContext.request.contextPath}/produitDetails?id=<%= produit.getId() %>&page=<%= currentPage + 1 %>">Suivant</a>
+                            <% } %>
+                        </div>
                     <% } else { %>
                         <p>Aucun commentaire pour le moment.</p>
                     <% } %>
@@ -140,6 +179,7 @@
                         <h4>Noter ce produit</h4>
                         <form action="${pageContext.request.contextPath}/submitAvis" method="post">
                             <input type="hidden" name="productId" value="<%= produit.getId() %>">
+                            <input type="hidden" name="csrfToken" value="<%= session.getAttribute("csrfToken") %>">
                             <select name="rating" required>
                                 <option value="">Sélectionner une note</option>
                                 <option value="1">1 étoile</option>
@@ -157,6 +197,7 @@
                         <h4>Laisser un commentaire</h4>
                         <form action="${pageContext.request.contextPath}/submitAvis" method="post">
                             <input type="hidden" name="productId" value="<%= produit.getId() %>">
+                            <input type="hidden" name="csrfToken" value="<%= session.getAttribute("csrfToken") %>">
                             <textarea name="comment" rows="4" placeholder="Écrivez votre commentaire ici..." required></textarea>
                             <button type="submit" class="btn btn-submit">Soumettre le commentaire</button>
                         </form>
@@ -177,5 +218,13 @@
             <p>© 2025 E-Shop. Tous droits réservés.</p>
         </div>
     </footer>
+        <script>
+        function confirmLogout(event, logoutUrl) {
+            event.preventDefault(); // Prevent the default link behavior
+            if (confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) {
+                window.location.href = logoutUrl; // Proceed with logout
+            }
+        }
+    </script>
 </body>
 </html>

@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Shop - Paiement</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientStyle.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/client/clientStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         .checkout-container {
@@ -118,6 +118,7 @@
     </style>
 </head>
 <body>
+    <!-- Header -->
     <header class="header">
         <div class="container">
             <div class="logo">
@@ -134,8 +135,10 @@
                     </a></li>
                     <% Utilisateur_model utilisateur = (Utilisateur_model) session.getAttribute("utilisateur"); %>
                     <% if (utilisateur != null) { %>
+                        <li><a href="${pageContext.request.contextPath}/profile">Mon Profil</a></li>
+                        <li><a href="${pageContext.request.contextPath}/orders">Mes commandes</a></li>
                         <li><span>Bonjour, <%= utilisateur.getNom() %></span></li>
-                        <li><a href="${pageContext.request.contextPath}/logout">Déconnexion</a></li>
+                        <li><a href="#" onclick="confirmLogout(event, '${pageContext.request.contextPath}/clientLogout')">Déconnexion</a></li>
                     <% } else { %>
                         <li><a href="${pageContext.request.contextPath}/login">Connexion</a></li>
                     <% } %>
@@ -206,5 +209,13 @@
             <p>© 2025 E-Shop. Tous droits réservés.</p>
         </div>
     </footer>
+        <script>
+        function confirmLogout(event, logoutUrl) {
+            event.preventDefault(); // Prevent the default link behavior
+            if (confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) {
+                window.location.href = logoutUrl; // Proceed with logout
+            }
+        }
+    </script>
 </body>
 </html>

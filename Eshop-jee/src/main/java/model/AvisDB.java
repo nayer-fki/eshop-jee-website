@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AvisDB {
-    // Add a new evaluation to the database
     public void ajouterEvaluation(Evaluation evaluation) throws SQLException {
         String sql = "INSERT INTO Evaluation (id, idUtilisateur, produitId, note) VALUES (?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
@@ -18,11 +17,9 @@ public class AvisDB {
             pstmt.setString(3, evaluation.getProduitId());
             pstmt.setInt(4, evaluation.getNote());
             pstmt.executeUpdate();
-            System.out.println("AvisDB: Added evaluation with ID " + evaluation.getId() + " for product " + evaluation.getProduitId());
         }
     }
 
-    // Add a new comment to the database
     public void ajouterCommentaire(Commentaire commentaire) throws SQLException {
         String sql = "INSERT INTO Commentaire (id, idUtilisateur, produitId, commentaire, dateCreation) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
@@ -33,23 +30,26 @@ public class AvisDB {
             pstmt.setString(4, commentaire.getCommentaire());
             pstmt.setDate(5, commentaire.getDateCreation());
             pstmt.executeUpdate();
-            System.out.println("AvisDB: Added comment with ID " + commentaire.getId() + " for product " + commentaire.getProduitId());
         }
     }
 
-    // Fetch all evaluations for a specific product
     public List<Evaluation> getEvaluationsByProduitId(String produitId) throws SQLException {
-        String sql = "SELECT * FROM Evaluation WHERE produitId = ?";
+        String sql = produitId == null 
+            ? "SELECT e.*, p.nom AS produitNom FROM Evaluation e LEFT JOIN Produit p ON e.produitId = p.id"
+            : "SELECT e.*, p.nom AS produitNom FROM Evaluation e LEFT JOIN Produit p ON e.produitId = p.id WHERE e.produitId = ?";
         List<Evaluation> evaluations = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, produitId);
+            if (produitId != null) {
+                pstmt.setString(1, produitId);
+            }
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     Evaluation evaluation = new Evaluation();
                     evaluation.setId(rs.getString("id"));
                     evaluation.setIdUtilisateur(rs.getString("idUtilisateur"));
                     evaluation.setProduitId(rs.getString("produitId"));
+                    evaluation.setProduitNom(rs.getString("produitNom"));
                     evaluation.setNote(rs.getInt("note"));
                     evaluations.add(evaluation);
                 }
@@ -58,19 +58,28 @@ public class AvisDB {
         return evaluations;
     }
 
-    // Fetch all comments for a specific product
-    public List<Commentaire> getCommentairesByProduitId(String produitId) throws SQLException {
-        String sql = "SELECT * FROM Commentaire WHERE produitId = ? ORDER BY dateCreation DESC";
+    public List<Commentaire> getCommentairesByProduitId(String produitId, int page, int pageSize) throws SQLException {
+        String sql = produitId == null 
+            ? "SELECT c.*, p.nom AS produitNom FROM Commentaire c LEFT JOIN Produit p ON c.produitId = p.id ORDER BY c.dateCreation DESC LIMIT ? OFFSET ?"
+            : "SELECT c.*, p.nom AS produitNom FROM Commentaire c LEFT JOIN Produit p ON c.produitId = p.id WHERE c.produitId = ? ORDER BY c.dateCreation DESC LIMIT ? OFFSET ?";
         List<Commentaire> commentaires = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, produitId);
+            if (produitId != null) {
+                pstmt.setString(1, produitId);
+                pstmt.setInt(2, pageSize);
+                pstmt.setInt(3, (page - 1) * pageSize);
+            } else {
+                pstmt.setInt(1, pageSize);
+                pstmt.setInt(2, (page - 1) * pageSize);
+            }
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     Commentaire commentaire = new Commentaire();
                     commentaire.setId(rs.getString("id"));
                     commentaire.setIdUtilisateur(rs.getString("idUtilisateur"));
                     commentaire.setProduitId(rs.getString("produitId"));
+                    commentaire.setProduitNom(rs.getString("produitNom"));
                     commentaire.setCommentaire(rs.getString("commentaire"));
                     commentaire.setDateCreation(rs.getDate("dateCreation"));
                     commentaires.add(commentaire);
@@ -80,18 +89,59 @@ public class AvisDB {
         return commentaires;
     }
 
-    // Calculate the average rating for a specific product
-    public double getAverageRatingByProduitId(String produitId) throws SQLException {
-        String sql = "SELECT AVG(note) as averageRating FROM Evaluation WHERE produitId = ?";
+    public int getCommentCount(String produitId) throws SQLException {
+        String sql = produitId == null ? "SELECT COUNT(*) FROM Commentaire" : "SELECT COUNT(*) FROM Commentaire WHERE produitId = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, produitId);
+            if (produitId != null) {
+                pstmt.setString(1, produitId);
+            }
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getDouble("averageRating");
+                    return rs.getInt(1);
                 }
             }
         }
-        return 0.0; // Return 0 if no ratings exist
+        return 0;
+    }
+
+    public double getAverageRatingByProduitId(String produitId) throws SQLException {
+        String sql = produitId == null ? "SELECT AVG(note) FROM Evaluation" : "SELECT AVG(note) FROM Evaluation WHERE produitId = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            if (produitId != null) {
+                pstmt.setString(1, produitId);
+            }
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble(1);
+                }
+            }
+        }
+        return 0.0;
+    }
+
+    public boolean hasUserEvaluated(String idUtilisateur, String produitId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Evaluation WHERE idUtilisateur = ? AND produitId = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, idUtilisateur);
+            pstmt.setString(2, produitId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void deleteComment(String commentId) throws SQLException {
+        String sql = "DELETE FROM Commentaire WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, commentId);
+            pstmt.executeUpdate();
+        }
     }
 }

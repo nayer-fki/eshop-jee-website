@@ -41,6 +41,28 @@ public class PanierDB {
             System.out.println("PanierDB: Added " + panier.getItems().size() + " items to cart ID " + panier.getId());
         }
     }
+    
+    public List<Produit_model> getDiscountedProducts() throws SQLException {
+        List<Produit_model> discountedProducts = new ArrayList<>();
+        String sql = "SELECT * FROM produit WHERE remise > 0";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Produit_model produit = new Produit_model();
+                produit.setId(rs.getString("id"));
+                produit.setNom(rs.getString("nom"));
+                produit.setDescription(rs.getString("description"));
+                produit.setPrix(rs.getDouble("prix"));
+                produit.setQuantite(rs.getInt("quantite"));
+                produit.setIdCategorie(rs.getString("idCategorie"));
+                produit.setImage(rs.getString("image"));
+                produit.setRemise(rs.getDouble("remise"));
+                discountedProducts.add(produit);
+            }
+        }
+        return discountedProducts;
+    }
 
     public Panier_model trouverPanier(String userId) throws SQLException {
         String sqlPanier = "SELECT * FROM panier WHERE idUtilisateur = ?";

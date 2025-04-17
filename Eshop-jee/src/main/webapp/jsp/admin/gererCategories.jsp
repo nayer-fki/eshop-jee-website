@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Gérer les catégories - E-Shop Admin</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/categoryAdmin.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin/categoryAdmin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -50,7 +50,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        
                         <th>Nom</th>
                         <th>Actions</th>
                     </tr>
@@ -62,7 +62,7 @@
                             for (Categorie_model categorie : categories) {
                     %>
                     <tr>
-                        <td><%= categorie.getId() %></td>
+                        
                         <td><%= categorie.getNom() %></td>
                         <td>
                             <button class="btn-edit" onclick="editCategory('<%= categorie.getId() %>', '<%= categorie.getNom() %>')"><i class="fas fa-edit"></i> Modifier</button>

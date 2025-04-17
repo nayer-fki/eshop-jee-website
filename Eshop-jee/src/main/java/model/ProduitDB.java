@@ -33,6 +33,71 @@ public class ProduitDB {
             pstmt.executeUpdate();
         }
     }
+    
+    
+    public List<Produit_model> getDiscountedProducts() throws SQLException {
+        List<Produit_model> discountedProducts = new ArrayList<>();
+        String sql = "SELECT * FROM produit WHERE remise > 0";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Produit_model produit = new Produit_model();
+                produit.setId(rs.getString("id"));
+                produit.setNom(rs.getString("nom"));
+                produit.setDescription(rs.getString("description"));
+                produit.setPrix(rs.getDouble("prix"));
+                produit.setQuantite(rs.getInt("quantite"));
+                produit.setIdCategorie(rs.getString("idCategorie"));
+                produit.setImage(rs.getString("image"));
+                produit.setRemise(rs.getDouble("remise"));
+                discountedProducts.add(produit);
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération des produits en remise : " + e.getMessage());
+            throw e;
+        }
+        return discountedProducts;
+    }
+    
+    public String getProductNameById(String produitId) throws SQLException {
+        String sql = "SELECT nom FROM Produit WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, produitId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("nom");
+                }
+            }
+        }
+        return "Produit inconnu";
+    }
+    
+    public List<Produit_model> getRelatedProducts(String categorieId, String excludeProduitId) throws SQLException {
+        List<Produit_model> produits = new ArrayList<>();
+        String sql = "SELECT * FROM produit WHERE idCategorie = ? AND id != ? LIMIT 4";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, categorieId);
+            pstmt.setString(2, excludeProduitId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Produit_model produit = new Produit_model();
+                    produit.setId(rs.getString("id"));
+                    produit.setNom(rs.getString("nom"));
+                    produit.setPrix(rs.getDouble("prix"));
+                    produit.setDescription(rs.getString("description"));
+                    produit.setImage(rs.getString("image"));
+                    produit.setQuantite(rs.getInt("quantite"));
+                    produit.setIdCategorie(rs.getString("idCategorie"));
+                    produit.setRemise(rs.getInt("remise"));
+                    produits.add(produit);
+                }
+            }
+        }
+        return produits;
+    }
 
     /**
      * Retrieves a product by its ID.

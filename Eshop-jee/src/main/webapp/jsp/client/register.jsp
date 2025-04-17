@@ -108,20 +108,7 @@
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="logo">
-                <h1><a href="${pageContext.request.contextPath}/index">E-Shop</a></h1>
-            </div>
-            <nav class="nav">
-                <ul>
-                    <li><a href="${pageContext.request.contextPath}/index">Accueil</a></li>
-                    <li><a href="${pageContext.request.contextPath}/cart">Panier <i class="fas fa-shopping-cart"></i></a></li>
-                    <li><a href="${pageContext.request.contextPath}/login">Connexion</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+
 
     <main class="main-content">
         <div class="register-container">
@@ -155,10 +142,6 @@
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <p>© 2025 E-Shop. Tous droits réservés.</p>
-        </div>
-    </footer>
+
 </body>
 </html>

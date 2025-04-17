@@ -8,11 +8,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Shop - Panier</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/clientStyle.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/cart.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/client/clientStyle.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/client/cart.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
+    <!-- Header -->
     <header class="header">
         <div class="container">
             <div class="logo">
@@ -29,8 +30,10 @@
                     </a></li>
                     <% Utilisateur_model utilisateur = (Utilisateur_model) session.getAttribute("utilisateur"); %>
                     <% if (utilisateur != null) { %>
+                        <li><a href="${pageContext.request.contextPath}/profile">Mon Profil</a></li>
+                        <li><a href="${pageContext.request.contextPath}/orders">Mes commandes</a></li>
                         <li><span>Bonjour, <%= utilisateur.getNom() %></span></li>
-                        <li><a href="${pageContext.request.contextPath}/logout">Déconnexion</a></li>
+                        <li><a href="#" onclick="confirmLogout(event, '${pageContext.request.contextPath}/clientLogout')">Déconnexion</a></li>
                     <% } else { %>
                         <li><a href="${pageContext.request.contextPath}/login">Connexion</a></li>
                     <% } %>
@@ -38,7 +41,6 @@
             </nav>
         </div>
     </header>
-
     <main class="main-content">
         <div class="cart-container">
             <h2>Votre Panier</h2>
@@ -76,11 +78,10 @@
                             <form action="${pageContext.request.contextPath}/updateCartQuantity" method="post" class="quantity-form">
                                 <input type="hidden" name="productId" value="<%= item.getProduit().getId() %>">
                                 <div class="quantity-control">
-                                    <button type="button" class="quantity-btn decrease">-</button>
-                                    <input type="number" name="quantity" value="<%= item.getQuantite() %>" min="1" class="quantity-input">
-                                    <button type="button" class="quantity-btn increase">+</button>
+                                    <button type="button" class="quantity-btn decrease" title="Diminuer la quantité"><i class="fas fa-minus"></i></button>
+                                    <input type="number" name="quantity" value="<%= item.getQuantite() %>" min="1" class="quantity-input" readonly>
+                                    <button type="button" class="quantity-btn increase" title="Augmenter la quantité"><i class="fas fa-plus"></i></button>
                                 </div>
-                                <button type="submit" class="update-btn">Mettre à jour</button>
                             </form>
                         </td>
                         <td data-label="Total" class="total"><%= item.getPrixUnitaire() * item.getQuantite() %> €</td>
@@ -106,31 +107,51 @@
     </footer>
 
     <script>
-        // JavaScript to handle increment and decrement buttons
+        // JavaScript to handle increment, decrement, and auto-submit
         document.querySelectorAll('.quantity-control').forEach(control => {
+            const form = control.closest('.quantity-form');
             const input = control.querySelector('.quantity-input');
             const decreaseBtn = control.querySelector('.decrease');
             const increaseBtn = control.querySelector('.increase');
+
+            const updateQuantity = () => {
+                // Show loading state
+                input.classList.add('loading');
+                decreaseBtn.disabled = true;
+                increaseBtn.disabled = true;
+
+                // Submit the form
+                form.submit();
+            };
 
             decreaseBtn.addEventListener('click', () => {
                 let value = parseInt(input.value);
                 if (value > 1) {
                     input.value = value - 1;
+                    updateQuantity();
                 }
             });
 
             increaseBtn.addEventListener('click', () => {
                 let value = parseInt(input.value);
                 input.value = value + 1;
+                updateQuantity();
             });
 
-            // Ensure the input value is always at least 1
+            // Prevent manual input since the field is readonly
             input.addEventListener('change', () => {
                 if (input.value < 1) {
                     input.value = 1;
                 }
             });
         });
+
+        function confirmLogout(event, logoutUrl) {
+            event.preventDefault();
+            if (confirm("Êtes-vous sûr de vouloir vous déconnecter ?")) {
+                window.location.href = logoutUrl;
+            }
+        }
     </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package controller;
+package controller.admin;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,6 +81,7 @@ public class CompteAdmin extends HttpServlet {
                 // Validate input
                 String nom = request.getParameter("nom");
                 String email = request.getParameter("email");
+                String oldPassword = request.getParameter("oldPassword");
                 String motDePasse = request.getParameter("motDePasse");
 
                 if (nom == null || nom.trim().isEmpty()) {
@@ -92,18 +93,31 @@ public class CompteAdmin extends HttpServlet {
                     throw new ServletException("Veuillez entrer une adresse email valide.");
                 }
 
+                // Handle password change
                 if (motDePasse != null && !motDePasse.trim().isEmpty()) {
+                    // Validate new password
                     if (motDePasse.length() < 8 || !motDePasse.matches(".*[a-zA-Z].*") || !motDePasse.matches(".*[0-9].*")) {
                         throw new ServletException("Le mot de passe doit contenir au moins 8 caractères, incluant des lettres et des chiffres.");
                     }
+
+                    // Verify old password
+                    if (oldPassword == null || oldPassword.trim().isEmpty()) {
+                        throw new ServletException("L'ancien mot de passe est requis pour changer le mot de passe.");
+                    }
+
+                    // Fetch the current admin from the database to get the hashed password
+                    Utilisateur_model currentAdmin = utilisateurDB.trouverUtilisateur(admin.getId());
+                    if (!utilisateurDB.verifyPassword(oldPassword, currentAdmin.getMotDePasse())) {
+                        throw new ServletException("L'ancien mot de passe est incorrect.");
+                    }
+
+                    // Update the password (UtilisateurDB will hash it)
+                    admin.setMotDePasse(motDePasse);
                 }
 
                 // Update admin details
                 admin.setNom(nom);
                 admin.setEmail(email);
-                if (motDePasse != null && !motDePasse.trim().isEmpty()) {
-                    admin.setMotDePasse(motDePasse);
-                }
 
                 // Handle image upload
                 Part filePart = request.getPart("image");

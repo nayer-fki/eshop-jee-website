@@ -63,6 +63,69 @@
     font-weight: 500;
 }
 
+.cart-table .quantity-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cart-table .quantity-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.cart-table .quantity-btn {
+    background: linear-gradient(90deg, #4CAF50, #45a049);
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s ease, transform 0.1s;
+}
+
+.cart-table .quantity-btn:hover {
+    background: linear-gradient(90deg, #45a049, #3d8b41);
+    transform: translateY(-1px);
+}
+
+.cart-table .quantity-btn:active {
+    transform: translateY(1px);
+}
+
+.cart-table .quantity-btn.decrease {
+    border-right: 1px solid #ddd;
+}
+
+.cart-table .quantity-btn.increase {
+    border-left: 1px solid #ddd;
+}
+
+.cart-table .quantity-input {
+    width: 50px;
+    text-align: center;
+    border: none;
+    padding: 8px;
+    font-size: 1rem;
+    color: #333;
+    background: transparent;
+}
+
+.cart-table .quantity-input[readonly] {
+    cursor: default;
+}
+
+.cart-table .quantity-input.loading {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path fill="none" d="M0 0h24v24H0z"/><path fill="%234CAF50" d="M12 4V2a10 10 0 0 1 10 10h-2a8 8 0 0 0-8-8z"/></svg>') no-repeat center;
+    background-size: 16px;
+    color: transparent;
+}
+
 .cart-table .action a {
     display: inline-block;
     padding: 8px 16px;
@@ -70,11 +133,16 @@
     color: #fff;
     text-decoration: none;
     border-radius: 5px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.1s;
 }
 
 .cart-table .action a:hover {
     background-color: #c0392b;
+    transform: translateY(-1px);
+}
+
+.cart-table .action a:active {
+    transform: translateY(1px);
 }
 
 .cart-total {
@@ -103,11 +171,16 @@
     border-radius: 5px;
     font-size: 1.1rem;
     font-weight: 500;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.1s;
 }
 
 .cart-total .btn-checkout:hover {
     background-color: #45a049;
+    transform: translateY(-1px);
+}
+
+.cart-total .btn-checkout:active {
+    transform: translateY(1px);
 }
 
 .no-products {
@@ -134,6 +207,10 @@
     .cart-table td {
         font-size: 0.9rem;
         padding: 10px;
+    }
+
+    .cart-table .quantity-control {
+        transform: scale(0.9);
     }
 
     .cart-table .action a {
@@ -186,6 +263,14 @@
         left: 10px;
         font-weight: 500;
         color: #333;
+    }
+
+    .cart-table .quantity {
+        text-align: center;
+    }
+
+    .cart-table .quantity-form {
+        justify-content: center;
     }
 
     .cart-table .action {

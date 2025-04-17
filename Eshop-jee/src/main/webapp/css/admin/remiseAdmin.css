@@ -1,0 +1,371 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Remise Management Section */
+.gererRemises .remise-management {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.gererRemises .remise-management:hover {
+    transform: translateY(-2px);
+}
+
+.gererRemises .remise-management h2 {
+    font-size: 1.75rem;
+    color: #ffffff;
+    margin-bottom: 2rem;
+    background: linear-gradient(90deg, #34495e, #2c3e50);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.gererRemises .remise-management h2 i {
+    margin-right: 0.75rem;
+}
+
+/* Filter and Search Bar */
+.gererRemises .filter-search-bar {
+    margin-bottom: 2rem;
+}
+
+.gererRemises .filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+
+.gererRemises .filter-group, .gererRemises .search-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.gererRemises .filter-group label, .gererRemises .search-group label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.gererRemises .filter-group select, .gererRemises .search-input {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.gererRemises .filter-group select {
+    min-width: 200px;
+}
+
+.gererRemises .search-input {
+    flex: 1;
+    min-width: 200px;
+}
+
+.gererRemises .filter-group select:focus, .gererRemises .search-input:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+    outline: none;
+}
+
+.gererRemises .search-btn {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(90deg, #27ae60, #219653);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.1s;
+}
+
+.gererRemises .search-btn:hover {
+    background: linear-gradient(90deg, #219653, #1b7b40);
+    transform: translateY(-1px);
+}
+
+.gererRemises .search-btn:active {
+    transform: translateY(1px);
+}
+
+/* Messages */
+.gererRemises .message {
+    margin-bottom: 1.5rem;
+}
+
+.gererRemises .message p {
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.gererRemises .message.error p {
+    background: #fff5f5;
+    color: #e74c3c;
+    border-left: 5px solid #e74c3c;
+}
+
+.gererRemises .message.error p i {
+    margin-right: 0.75rem;
+    color: #e74c3c;
+}
+
+.gererRemises .message.success p {
+    background: #e6f4e6;
+    color: #27ae60;
+    border-left: 5px solid #27ae60;
+}
+
+.gererRemises .message.success p i {
+    margin-right: 0.75rem;
+    color: #27ae60;
+}
+
+/* Form */
+.gererRemises .remise-form-container {
+    margin-bottom: 2rem;
+}
+
+.gererRemises .remise-form {
+    display: none;
+    background: #f9fafb;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.gererRemises .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.gererRemises .form-group label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.gererRemises .form-group label i {
+    margin-right: 0.5rem;
+    color: #34495e;
+}
+
+.gererRemises .form-group input[type="text"],
+.gererRemises .form-group input[type="number"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.gererRemises .form-group input[readonly] {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+}
+
+.gererRemises .form-group input[type="number"]:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+    outline: none;
+}
+
+.gererRemises .form-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.gererRemises .btn-update, .gererRemises .btn-cancel {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+}
+
+.gererRemises .btn-update {
+    background: linear-gradient(90deg, #27ae60, #219653);
+    color: #fff;
+}
+
+.gererRemises .btn-update:hover {
+    background: linear-gradient(90deg, #219653, #1b7b40);
+    transform: translateY(-1px);
+}
+
+.gererRemises .btn-cancel {
+    background: linear-gradient(90deg, #95a5a6, #7f8c8d);
+    color: #fff;
+}
+
+.gererRemises .btn-cancel:hover {
+    background: linear-gradient(90deg, #7f8c8d, #6b7475);
+    transform: translateY(-1px);
+}
+
+.gererRemises .btn-update:active, .gererRemises .btn-cancel:active {
+    transform: translateY(1px);
+}
+
+/* Table */
+.gererRemises .remise-table {
+    margin-top: 1rem;
+    overflow-x: auto;
+}
+
+.gererRemises .remise-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.gererRemises .remise-table th,
+.gererRemises .remise-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: left;
+}
+
+.gererRemises .remise-table th {
+    background: linear-gradient(90deg, #34495e, #2c3e50);
+    color: white;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.gererRemises .remise-table tbody tr {
+    transition: background 0.2s;
+}
+
+.gererRemises .remise-table tbody tr:nth-child(even) {
+    background-color: #f9fafb;
+}
+
+.gererRemises .remise-table tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+.gererRemises .remise-table td.highlight-discount {
+    color: #e67e22;
+    font-weight: 600;
+}
+
+.gererRemises .remise-table td.no-data {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+    padding: 2rem;
+}
+
+.gererRemises .btn-edit, .gererRemises .btn-delete {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.1s;
+}
+
+.gererRemises .btn-edit {
+    background: linear-gradient(90deg, #2980b9, #1c6ea4);
+    color: #fff;
+    margin-right: 0.5rem;
+}
+
+.gererRemises .btn-edit:hover {
+    background: linear-gradient(90deg, #1c6ea4, #155a8a);
+    transform: translateY(-1px);
+}
+
+.gererRemises .btn-delete {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+    color: #fff;
+}
+
+.gererRemises .btn-delete:hover {
+    background: linear-gradient(90deg, #c0392b, #a32f24);
+    transform: translateY(-1px);
+}
+
+.gererRemises .btn-edit:active, .gererRemises .btn-delete:active {
+    transform: translateY(1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .gererRemises .remise-management {
+        padding: 1rem;
+        margin: 1rem;
+    }
+
+    .gererRemises .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .gererRemises .filter-group, .gererRemises .search-group {
+        width: 100%;
+    }
+
+    .gererRemises .filter-group select, .gererRemises .search-input {
+        width: 100%;
+    }
+
+    .gererRemises .search-btn {
+        width: 100%;
+    }
+
+    .gererRemises .form-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .gererRemises .btn-update, .gererRemises .btn-cancel {
+        width: 100%;
+    }
+
+    .gererRemises .remise-table th, .gererRemises .remise-table td {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+}

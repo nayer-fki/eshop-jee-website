@@ -526,3 +526,9 @@ body {
     background-color: #e65b50;
     transform: translateY(-2px);
 }
+
+.gererVideo .loading-spinner {
+    text-align: center;
+    color: #7f8c8d;
+    padding: 1rem;
+}

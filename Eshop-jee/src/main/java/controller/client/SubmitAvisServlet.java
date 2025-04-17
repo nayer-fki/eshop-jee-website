@@ -1,4 +1,4 @@
-package controller;
+package controller.client;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -42,14 +42,20 @@ public class SubmitAvisServlet extends HttpServlet {
             String rating = request.getParameter("rating");
             if (rating != null && !rating.isEmpty()) {
                 int note = Integer.parseInt(rating);
-                if (note >= 1 && note <= 5) { // Ensure rating is between 1 and 5
-                    Evaluation evaluation = new Evaluation();
-                    evaluation.setId(UUID.randomUUID().toString());
-                    evaluation.setIdUtilisateur(utilisateur.getId());
-                    evaluation.setProduitId(productId);
-                    evaluation.setNote(note);
-                    avisDB.ajouterEvaluation(evaluation);
-                    System.out.println("SubmitAvisServlet: Added evaluation for product " + productId + " by user " + utilisateur.getId());
+                if (note >= 1 && note <= 5) {
+                    if (!avisDB.hasUserEvaluated(utilisateur.getId(), productId)) {
+                        Evaluation evaluation = new Evaluation();
+                        evaluation.setId(UUID.randomUUID().toString());
+                        evaluation.setIdUtilisateur(utilisateur.getId());
+                        evaluation.setProduitId(productId);
+                        evaluation.setNote(note);
+                        avisDB.ajouterEvaluation(evaluation);
+                        System.out.println("SubmitAvisServlet: Added evaluation for product " + productId + " by user " + utilisateur.getId());
+                    } else {
+                        request.getSession().setAttribute("errorMessage", "Vous avez déjà noté ce produit.");
+                        response.sendRedirect(redirectUrl);
+                        return;
+                    }
                 }
             }
 

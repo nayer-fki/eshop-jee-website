@@ -1,4 +1,4 @@
-package controller;
+package controller.admin;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,7 @@ import jakarta.servlet.http.Part;
 import model.Utilisateur_model;
 import model.UtilisateurDB;
 
-@WebServlet("/gererUtilisateurs") // Ensure correct servlet mapping
+@WebServlet("/gererUtilisateurs")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
                  maxFileSize = 1024 * 1024 * 10,      // 10MB
                  maxRequestSize = 1024 * 1024 * 50)    // 50MB
@@ -54,7 +54,7 @@ public class Utilisateur extends HttpServlet {
             }
             LOGGER.log(Level.INFO, "Nombre d'utilisateurs récupérés : {0}", utilisateurs != null ? utilisateurs.size() : 0);
             request.setAttribute("utilisateurs", utilisateurs);
-            request.setAttribute("page", "/jsp/admin/gererUtilisateurs.jsp"); // Forward to layout
+            request.setAttribute("page", "/jsp/admin/gererUtilisateurs.jsp");
             request.getRequestDispatcher("/jsp/admin/adminLayout.jsp").forward(request, response);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des utilisateurs", e);
@@ -83,16 +83,14 @@ public class Utilisateur extends HttpServlet {
                 utilisateur.setMotDePasse(request.getParameter("motDePasse"));
                 utilisateur.setEstAdmin("true".equals(request.getParameter("estAdmin")));
                 
-                // Handle image upload
+                // Handle image upload (optional)
                 Part filePart = request.getPart("image");
                 String imagePath = handleImageUpload(filePart);
-                if (imagePath == null) {
-                    throw new ServletException("Image upload failed or no image provided.");
-                }
-                utilisateur.setImage(imagePath);
+                utilisateur.setImage(imagePath); // imagePath can be null if no image is uploaded
 
                 utilisateurDB.ajouterUtilisateur(utilisateur);
                 LOGGER.log(Level.INFO, "Utilisateur ajouté avec succès : ID={0}", utilisateur.getId());
+                request.setAttribute("success", "Utilisateur ajouté avec succès.");
             } else if ("modifier".equals(action)) {
                 String id = request.getParameter("id");
                 Utilisateur_model utilisateur = utilisateurDB.trouverUtilisateur(id);
@@ -102,28 +100,55 @@ public class Utilisateur extends HttpServlet {
                     utilisateur.setMotDePasse(request.getParameter("motDePasse"));
                     utilisateur.setEstAdmin("true".equals(request.getParameter("estAdmin")));
                     
-                    // Handle image upload
+                    // Handle image upload (optional)
                     Part filePart = request.getPart("image");
                     String imagePath = handleImageUpload(filePart);
                     utilisateur.setImage(imagePath != null ? imagePath : utilisateur.getImage());
 
                     utilisateurDB.modifierUtilisateur(utilisateur);
                     LOGGER.log(Level.INFO, "Utilisateur modifié avec succès : ID={0}", id);
+                    request.setAttribute("success", "Utilisateur modifié avec succès.");
                 } else {
                     LOGGER.log(Level.WARNING, "Utilisateur non trouvé pour modification : ID={0}", id);
+                    request.setAttribute("error", "Utilisateur non trouvé.");
                 }
             } else if ("supprimer".equals(action)) {
                 String id = request.getParameter("id");
-                utilisateurDB.supprimerUtilisateur(id);
-                LOGGER.log(Level.INFO, "Utilisateur supprimé avec succès : ID={0}", id);
+                Utilisateur_model utilisateur = utilisateurDB.trouverUtilisateur(id);
+                if (utilisateur != null) {
+                    // Optionally delete the image file from the server
+                    String imagePath = utilisateur.getImage();
+                    if (imagePath != null) {
+                        String fullPath = getServletContext().getRealPath("") + File.separator + imagePath;
+                        File imageFile = new File(fullPath);
+                        if (imageFile.exists()) {
+                            imageFile.delete();
+                        }
+                    }
+                    utilisateurDB.supprimerUtilisateur(id);
+                    LOGGER.log(Level.INFO, "Utilisateur supprimé avec succès : ID={0}", id);
+                    request.setAttribute("success", "Utilisateur supprimé avec succès.");
+                } else {
+                    LOGGER.log(Level.WARNING, "Utilisateur non trouvé pour suppression : ID={0}", id);
+                    request.setAttribute("error", "Utilisateur non trouvé.");
+                }
             }
+
+            // Reload users and forward to the same page
+            List<Utilisateur_model> utilisateurs = utilisateurDB.listerUtilisateurs();
             String query = request.getParameter("query");
             if (query != null && !query.trim().isEmpty()) {
-                query = java.net.URLEncoder.encode(query, "UTF-8").replace("+", "%20");
-                response.sendRedirect(request.getContextPath() + "/gererUtilisateurs?query=" + query);
-            } else {
-                response.sendRedirect(request.getContextPath() + "/gererUtilisateurs");
+                query = java.net.URLDecoder.decode(query, "UTF-8").trim();
+                final String searchQuery = query.toLowerCase();
+                utilisateurs = utilisateurs.stream()
+                    .filter(u -> (u.getNom() != null && u.getNom().toLowerCase().contains(searchQuery)) ||
+                                 (u.getEmail() != null && u.getEmail().toLowerCase().contains(searchQuery)))
+                    .collect(Collectors.toList());
+                request.setAttribute("searchQuery", query);
             }
+            request.setAttribute("utilisateurs", utilisateurs);
+            request.setAttribute("page", "/jsp/admin/gererUtilisateurs.jsp");
+            request.getRequestDispatcher("/jsp/admin/adminLayout.jsp").forward(request, response);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de l'opération sur l'utilisateur", e);
             request.setAttribute("error", "Erreur lors de l'opération sur l'utilisateur : " + e.getMessage());
@@ -154,11 +179,11 @@ public class Utilisateur extends HttpServlet {
                     filePart.write(file.getAbsolutePath());
                     return UPLOAD_DIR + "/" + fileName;
                 } else {
-                    throw new ServletException("Invalid file type. Please upload an image.");
+                    throw new ServletException("Type de fichier invalide. Veuillez uploader une image.");
                 }
             }
         }
-        return null; // Return null if no image is uploaded, but this should trigger the required validation
+        return null; // Return null if no image is uploaded
     }
 
     // Helper method to extract file name from Part

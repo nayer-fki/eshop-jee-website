@@ -1,4 +1,4 @@
-package controller;
+package controller.client;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -35,6 +35,9 @@ public class ProduitDetailsServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             String productId = request.getParameter("id");
+            int page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+            int pageSize = 5; // Number of comments per page
+
             if (productId != null && !productId.isEmpty()) {
                 // Fetch the product
                 Produit_model produit = produitDB.getProductById(productId);
@@ -43,8 +46,12 @@ public class ProduitDetailsServlet extends HttpServlet {
                     Categorie_model categorie = categorieDB.getCategorieById(produit.getIdCategorie());
                     // Fetch evaluations and comments
                     List<Evaluation> evaluations = avisDB.getEvaluationsByProduitId(productId);
-                    List<Commentaire> commentaires = avisDB.getCommentairesByProduitId(productId);
+                    List<Commentaire> commentaires = avisDB.getCommentairesByProduitId(productId, page, pageSize);
                     double averageRating = avisDB.getAverageRatingByProduitId(productId);
+                    int totalComments = avisDB.getCommentCount(productId);
+                    int totalPages = (int) Math.ceil((double) totalComments / pageSize);
+                    // Fetch related products
+                    List<Produit_model> relatedProducts = produitDB.getRelatedProducts(produit.getIdCategorie(), produit.getId());
 
                     // Set attributes for the JSP
                     request.setAttribute("produit", produit);
@@ -52,6 +59,9 @@ public class ProduitDetailsServlet extends HttpServlet {
                     request.setAttribute("evaluations", evaluations);
                     request.setAttribute("commentaires", commentaires);
                     request.setAttribute("averageRating", averageRating);
+                    request.setAttribute("currentPage", page);
+                    request.setAttribute("totalPages", totalPages);
+                    request.setAttribute("relatedProducts", relatedProducts);
                 }
             }
             request.getRequestDispatcher("/jsp/client/produitDetails.jsp").forward(request, response);
